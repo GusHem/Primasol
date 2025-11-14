@@ -189,7 +189,7 @@
             selectedQuoteId: null, activeView: 'quotes',
             filter: 'prioriterade', searchTerm: '', toast: null, showWidgets: true,
             theme: 'light',
-            formData: null, openSections: { info: true, product: false, costs: false, customCosts: false, staff: false, internal: false, projectSummary: true }, // <-- NY: Öppna Project Summary by default
+            formData: null, openSections: { customerInfo: false, info: false, product: false, costs: false, customCosts: false, staff: false, internal: false, projectSummary: false }, // <-- Lagt til customerInfo: false
             isTimePickerOpen: false, timePickerTarget: null, calendarViewDate: new Date(),
             displayLimit: 12, openCardMenu: { id: null, target: null },
             analyticsSubView: 'overview', isModalStatusOpen: false,
@@ -303,7 +303,7 @@
             // --- NYTT (PoC Steg 1): Datastruktur för Pris-Matriser ---
             // Här lagrar vi de digitaliserade prislistorna från PDF:erna (Innkjøpspris NOK ex. mva)
             priceMatrices: {
-                'screen_95': {
+                'hansen_screen_95': { // <-- ENDRING: Byttet navn fra 'screen_95' för å matche produkt-ID 'hansen_screen_95'
                     // Bredd (cm) som nyckel
                     "100": { "100": 1370, "110": 1418, "120": 1496, "130": 1559, "140": 1607, "150": 1670, "160": 1717, "170": 1780, "180": 1843, "190": 1890, "200": 1937, "210": 2000, "220": 2048, "230": 2111, "240": 2189, "250": 2300, "260": 2363, "270": 2426, "280": 2473, "290": 2536, "300": 2583, "310": 2630, "320": 2693, "330": 2756, "340": 2819 },
                     "110": { "100": 1481, "110": 1528, "120": 1591, "130": 1670, "140": 1717, "150": 1780, "160": 1843, "170": 1890, "180": 1953, "190": 2016, "200": 2063, "210": 2126, "220": 2221, "230": 2268, "240": 2315, "250": 2457, "260": 2536, "270": 2583, "280": 2630, "290": 2693, "300": 2788, "310": 2835, "320": 2898, "330": 2945, "340": 3008 },
@@ -357,7 +357,42 @@
                         'struktur': { type: 'percent', value: 20 }  // Strukturlakk: +20%
                     }
                 }
-            }
+            },
+
+            // --- NYTT (Steg 3.1): Datastruktur för Produktval (Tillegg) ---
+            // Definierar vilka val som är tillgängliga för varje produkt.
+            // Nycklarna (t.ex. 'standard_ral') ska matcha nycklarna i state.priceRules
+            productOptions: {
+                'hansen_screen_95': {
+                    'motor': [
+                        { value: 'somfy_io_6nm', label: 'Somfy io Motor (6Nm)' },
+                        { value: 'somfy_io_10nm', label: 'Somfy io Motor (10Nm)' },
+                        { value: 'somfy_io_20nm', label: 'Somfy io Motor (20Nm)' },
+                        { value: 'faher_solar', label: 'Faher Solar Motor' }
+                    ],
+                    'duk': [
+                        // Standarddukar (ingen pristillägg)
+                        { value: 'fabric_soltis_86_88_92', label: 'Duk: Soltis 86/88/92 (Standard)' },
+                        { value: 'fabric_serge_ferrari', label: 'Duk: Serge Ferrari (Standard)' },
+                        { value: 'fabric_mermet_satine_5500', label: 'Duk: Mermet Satine 5500 (Standard)' },
+                        
+                        // Dukar med pristillägg (från priceRules)
+                        { value: 'fabric_soltis_96', label: 'Duk: Soltis 96 (+10%)' },
+                        { value: 'fabric_serge_ferrari_1', label: 'Duk: Serge 1% (+10%)' },
+                        { value: 'fabric_blackout', label: 'Duk: Blackout (+15%)' },
+                        { value: 'fabric_acryl', label: 'Duk: Acryl (+15%)' },
+                        { value: 'fabric_ultravision', label: 'Duk: Ultravision (+15%)' },
+                        { value: 'fabric_natte', label: 'Duk: Natte (+5%)' }
+                    ],
+                    'farge': [
+                        { value: 'standard_ral', label: 'Standard RAL (Gratis)' },
+                        { value: 'non_standard_ral', label: 'Egendefinert RAL (+15%)' },
+                        { value: 'metallic', label: 'Metallic (+20%)' },
+                        { value: 'struktur', label: 'Strukturlakk (+20%)' }
+                    ]
+                }
+                // ... Fler produkter (neva_c80_f80 etc.) kan läggas till här
+            },
             
         }; // <-- **FIKS: Flyttet den avslutande '}'**
         
@@ -366,40 +401,10 @@
         state.productSupplierFilter = 'all';
         // --- SLUTT NYTT STATE ---
 
-        // --- NYTT: Datastruktur för Pris-konfigurator PoC (Delta-fix 1) ---
-        // Steg 1: Datamatris (Innkjøpspris) för "Screen 95"
-        // Detta är ett litet utdrag från PDF "Screen 2025 Revidert.pdf", sida 13 (R 05)
-        state.priceMatrices = {
-            'hansen_screen_95': {
-                // Høyde (cm)
-                100: { 100: 1481, 110: 1575, 120: 1670, 130: 1748, 140: 1859 },
-                110: { 100: 1528, 110: 1622, 120: 1733, 130: 1843, 140: 1922 },
-                120: { 100: 1591, 110: 1701, 120: 1796, 130: 1906, 140: 2000 },
-                130: { 100: 1670, 110: 1748, 120: 1874, 130: 1969, 140: 2063 },
-                140: { 100: 1717, 110: 1843, 120: 1937, 130: 2032, 140: 2174 },
-            }
-            // ... Fler produkter (neva_c80_f80 etc.) kan läggas till här
-        };
-
-        // Steg 2: Prisregler (Tillegg)
-        state.priceRules = {
-            'duk': {
-                'soltis_standard': { name: 'Soltis 86/88/92 (Standard)', type: 'multiplier', value: 1 },
-                'soltis_96': { name: 'Soltis 96', type: 'multiplier', value: 1.10 }, // +10%
-                'blackout_100': { name: 'Blackout 100% (Mermet)', type: 'multiplier', value: 1.25 }, // +25%
-                'swo': { name: 'Sunworker Opaque SWO', type: 'multiplier', value: 1.15 }, // +15%
-                'acryl': { name: 'Acryl', type: 'multiplier', value: 1.15 }, // +15%
-                'natte': { name: 'Natte', type: 'multiplier', value: 1.05 }, // +5%
-            },
-            'motor': {
-                'manuell': { name: 'Manuell (Standard)', type: 'flat', value: 0 },
-                'faher_solar_10nm': { name: 'Faher Solar Bi (10Nm)', type: 'flat', value: 3413 }, // PDF s. M05
-                'somfy_solar_6nm': { name: 'Somfy Solar io (6Nm)', type: 'flat', value: 5804 }, // PDF s. M17
-                'somfy_solar_10nm': { name: 'Somfy Solar io (10Nm)', type: 'flat', value: 6074 } // PDF s. M17
-            }
-            // ... Fler regler (färg, kassett) kan läggas till här
-        };
-        // --- SLUTT PÅ NYTT (Delta-fix 1) ---
+        // --- BORTTAGET: Duplikat data för pris-konfigurator (Delta-fix 1) ---
+        // Den lilla test-datan som låg här (linje 664-701) er nå borttagen.
+        // Vi bruker nå kun den store datastrukturen definert ovenfor.
+        // --- SLUTT PÅ BORTTAGET ---
 
 
         const texts = { sv: { 'login.welcome': 'Velkommen til Prima Sol Portalen', 
@@ -877,6 +882,23 @@
                 attachments: safeJsonParse(n8nQuote.attachments, [])
             };
             
+            // --- NYTT (Steg 3.2b): Migrering for 'valg'-objekt ---
+            // Sikrer at alle produkter har et 'valg'-objekt for bakoverkompatibilitet
+            if (quoteObject.linkedProducts && quoteObject.linkedProducts.length > 0) {
+                quoteObject.linkedProducts.forEach(item => {
+                    if (!item.valg) { // Hvis 'valg' mangler
+                        item.valg = {}; // Opprett et tomt objekt
+                        // Vi kan prøve å fylle det dynamisk hvis vi har productId
+                        if (item.productId && state.productOptions[item.productId]) {
+                            Object.keys(state.productOptions[item.productId]).forEach(key => {
+                                item.valg[key] = null; // Sett standard til null
+                            });
+                        }
+                    }
+                });
+            }
+            // --- SLUTT NYTT ---
+            
             // Om linkedProducts är tom, migrera från gamla fält (för bakåtkompatibilitet)
             if ((!quoteObject.linkedProducts || quoteObject.linkedProducts.length === 0) && n8nQuote.productDescription) {
                 quoteObject.linkedProducts = [{
@@ -885,7 +907,8 @@
                     name: n8nQuote.productDescription.split(',')[0] || "Importert produkt",
                     quantity: Number(n8nQuote.productCount || n8nQuote.antallEnheter) || 1,
                     pricePerUnit: Number(n8nQuote.productUnitCost || n8nQuote.prisPerEnhet) || 0,
-                    notes: n8nQuote.productDescription || ''
+                    notes: n8nQuote.productDescription || '',
+                    valg: {} // <-- NYTT (Steg 3.2b): Legg til 'valg' for gammel migrering
                 }];
             }
 
@@ -1185,9 +1208,13 @@
         }
 
         // --- NY FUNKSJON (PoC Steg 2): Pris-kalkulator ---
-        function getCalculatedInnkjøpspris(productId, width_cm, height_cm) {
+        // --- MODIFISERT (Steg 4.1): Lagt til 'valg'-argument ---
+        function getCalculatedInnkjøpspris(productId, width_cm, height_cm, valg = {}) {
             // Finner den relevante pris-matrisen
-            // TODO: Utvid denne logikken til å støtte flere produkt-IDer
+            // --- MODIFISERT: Henter matrise dynamisk basert på produkt-ID ---
+            const matrix = state.priceMatrices[productId];
+
+            /* Gammel, hardkodet logikk (erstattet):
             let matrix;
             if (productId === 'hansen_screen_95') {
                 matrix = state.priceMatrices['hansen_screen_95'];
@@ -1195,9 +1222,12 @@
                 // Fallback for produkter uten matrise
                 return { pris: null, error: `Ingen pris-matrise funnet for ${productId}.` };
             }
+            */
+            // --- SLUTT PÅ MODIFISERING ---
 
             if (!matrix) {
-                return { pris: null, error: `Matrise-data mangler.` };
+                // Fallback for produkter uten matrise
+                return { pris: null, error: `Ingen pris-matrise funnet for ${productId}.` };
             }
 
             // --- Logikk for å finne nærmeste Høyde (H) ---
@@ -1383,13 +1413,19 @@
         }
         
         // --- NY FUNKSJON FÖR PROJEKTSAMMANFATTNING ---
-        function renderProjectSummary(q, theme, createSection) { // <-- FIX: Accept createSection as an argument
+        function renderProjectSummary(q, theme) { // <-- FIX: Accept createSection as an argument
             const siblings = getSiblingQuotes(q);
-            if (siblings.length === 0) return createSection('Relaterade Tillbud', 'projectSummary', [
-                 createElement('div', { className: 'sm:col-span-2 p-2 rounded-lg bg-blue-50 dark:bg-blue-900/50 text-sm text-blue-700 dark:text-blue-300' }, 
-                `Dette tilbudet er unikt i Prosjekt ID: ${q.projectId}.`
-            )]);
-
+            const container = createElement('div', { className: 'sm:col-span-2 mt-4' }); // <-- Wrapper for the content
+        
+            if (siblings.length === 0) {
+                container.append(createElement('div', { className: 'p-2 rounded-lg bg-blue-50 dark:bg-blue-900/50 text-sm text-blue-700 dark:text-blue-300' }, 
+                    `Dette tilbudet er unikt i Prosjekt ID: ${q.projectId}.`
+                ));
+                return container; // <-- Return the content
+            }
+        
+            container.append(createElement('label', { className: 'block text-sm font-medium mb-2' }, `Relaterade Tillbud (${siblings.length})`)); // <-- Add a simple label
+        
             const list = createElement('div', { className: 'space-y-2' });
             siblings.forEach(s => {
                 const pillStyle = getStatusPillStyles(s.status, theme);
@@ -1400,7 +1436,7 @@
                         setState({ 
                             selectedQuoteId: s.id, 
                             formData: { ...s },
-                            openSections: { info: true, projectSummary: true } // Öppnar info- & Project Summary-sektionerna
+                            openSections: { info: true } // Öppnar info- & Project Summary-sektionerna
                         });
                     }
                 },
@@ -1408,10 +1444,9 @@
                     createElement('span', { className: `px-3 py-0.5 rounded-full text-xs font-semibold ${pillStyle}` }, t(`status.${s.status}`))
                 ));
             });
-
-            return createSection(`Relaterade Tillbud (${siblings.length}) - Prosjekt: ${q.projectId}`, 'projectSummary', [ 
-                createElement('div', { className: 'sm:col-span-2 mt-4 space-y-3' }, list)
-            ]);
+        
+            container.append(list);
+            return container; // <-- Return the content
         }
         // --- SLUTT NY FUNKSJON ---
 
@@ -1523,9 +1558,15 @@
                                 oldSummarySection.replaceWith(newSummarySection);
                             }
                             
-                            // C. Uppdatera själva input-fältet
-                            const projectIdInput = document.getElementById('project-id-input');
-                            if (projectIdInput) projectIdInput.value = project.id;
+                            // --- START A2 (Oppdater Tagg) ---
+                            // C. Uppdatera "taggen"
+                            const projectIdTag = document.getElementById('project-id-tag');
+                            if (projectIdTag) {
+                                // Snyggare oppdatering
+                                const theme = themes[state.theme]; // Hent theme
+                                projectIdTag.innerHTML = `<span class="${theme.textSecondary} mr-1">${icons.projects('w-5 h-5')}</span> ${project.id}`;
+                            }
+                            // --- SLUTT A2 ---
                             
                             menu.remove();
                         }
@@ -1617,52 +1658,68 @@
                 return createElement('div', {className: fullWidth ? 'sm:col-span-2' : ''}, createElement('label', {className:'block text-sm font-medium mb-1'}, label), input);
             };
 
-            // --- NYTT: Anpassad komponent för Projekt-ID ---
-            const createProjectLinkerField = (key, label) => {
-                const container = createElement('div', { className: 'relative' });
+            // --- NY HJELPEFUNKSJON for <select> ---
+            const createSelectField = (key, label, options, fullWidth = false) => {
+                const select = createElement('select', {
+                    className: `w-full p-3 rounded-lg border ${theme.border} ${theme.inputBg}`,
+                    onchange: e => update(key, e.target.value)
+                });
                 
+                // Sørg for at en standardverdi er satt hvis ingenting er valgt
+                if (!q[key] && options.length > 0) {
+                    // Sett til første alternativ som standard, men bare hvis det ikke er satt
+                    if(!q[key]) update(key, options[0].value); 
+                }
+
+                options.forEach(opt => {
+                    select.append(createElement('option', { 
+                        value: opt.value, 
+                        selected: q[key] === opt.value 
+                    }, opt.label));
+                });
+                
+                return createElement('div', { className: fullWidth ? 'sm:col-span-2' : '' },
+                    createElement('label', { className: 'block text-sm font-medium mb-1' }, label),
+                    select
+                );
+            };
+            // --- SLUTT NY HJELPEFUNKSJON ---
+
+            // --- START A2 (Project ID Tag) ---
+            // MODIFISERT: Endret fra input-felt til en "tagg"-knapp
+            const createProjectLinkerField = (key, label) => {
+                const theme = themes[state.theme]; // Behöver theme
+                const q = state.formData; // Behöver q (state.formData)
+                
+                const container = createElement('div', { className: 'relative' });
                 const labelEl = createElement('label', { className: 'block text-sm font-medium mb-1' }, label);
                 
-                const inputGroup = createElement('div', { className: 'flex' });
-                const input = createElement('input', {
-                    type: 'text',
-                    id: 'project-id-input', // Ge ett ID för uppdatering
-                    value: q[key] || '',
-                    className: `w-full p-3 rounded-l-lg border ${theme.border} ${theme.inputBg}`,
-                    oninput: e => update(key, e.target.value),
-                    onchange: e => {
-                        // Manuell DOM Hotswap vid manuell ändring
-                        const newSummarySection = renderProjectSummary(q, theme, createSection);
-                        const oldSummarySection = document.getElementById('project-summary-section');
-                        if (oldSummarySection) oldSummarySection.replaceWith(newSummarySection);
-                    }
-                });
-
-                const linkButton = createElement('button', {
+                // Detta är "taggen"
+                const tagButton = createElement('button', {
                     type: 'button',
-                    className: `px-3 py-3 border-t border-b border-r ${theme.border} ${theme.buttonSecondaryBg} ${theme.buttonSecondaryHover} rounded-r-lg`,
-                    innerHTML: icons.search('w-5 h-5'),
+                    id: 'project-id-tag', // ID för uppdatering
+                    className: `px-4 py-3 rounded-lg font-semibold text-sm ${theme.buttonSecondaryBg} ${theme.buttonSecondaryHover} flex items-center gap-2 text-left w-full`, // <-- La til w-full
+                    innerHTML: `<span class="${theme.textSecondary} mr-1">${icons.projects('w-5 h-5')}</span> ${q.projectId || 'Koble til et prosjekt...'}`, // <-- Viser projectId
                     onclick: (e) => {
                         e.stopPropagation();
                         document.querySelectorAll('#modal-project-linker-menu, #modal-product-search-menu').forEach(m => m.remove());
                         
                         const menu = renderProjectLinkerSearchMenu(theme, q, update, createSection);
                         
-                        // Positionera menyn
-                        const rect = input.getBoundingClientRect();
+                        // Positionera menyn under taggen
+                        const rect = e.currentTarget.getBoundingClientRect();
                         menu.style.top = `${rect.bottom + 5}px`;
                         menu.style.left = `${rect.left}px`;
-                        menu.style.width = `${rect.width}px`; // Matcha bredden
+                        menu.style.width = `${rect.width < 384 ? 384 : rect.width}px`; // Minst 384px bred
                         
                         document.body.append(menu);
                     }
                 });
-
-                inputGroup.append(input, linkButton);
-                container.append(labelEl, inputGroup);
+                
+                container.append(labelEl, tagButton);
                 return container;
             };
-            // --- SLUT PÅ NY KOMPONENT ---
+            // --- SLUTT A2 ---
 
             const createTextarea = (key, label) => createElement('div', {className:'sm:col-span-2'}, createElement('label', {className:'block text-sm font-medium mb-1'}, label), createElement('textarea', {oninput: e=>update(key,e.target.value), className:`w-full p-3 rounded-lg border ${theme.border} ${theme.inputBg} min-h-[100px]`}, q[key]||''));
             
@@ -1686,7 +1743,8 @@
                         const targetRect = e.currentTarget.getBoundingClientRect();
                         const menu = createElement('div', { 
                             id: 'modal-product-search-menu', 
-                            className: `absolute w-full md:w-96 max-h-64 overflow-y-auto ${theme.cardBg} rounded-lg shadow-2xl border ${theme.border} z-20 animate-fade-in-fast`,
+                            // --- FIKS: Økt z-index fra z-20 til z-40 (må være høyere enn modalens z-30) ---
+                            className: `absolute w-full md:w-96 max-h-64 overflow-y-auto ${theme.cardBg} rounded-lg shadow-2xl border ${theme.border} z-40 animate-fade-in-fast`,
                             style: { top: `${targetRect.bottom + 5}px`, left: `${targetRect.left}px` }
                         });
 
@@ -1696,6 +1754,18 @@
                                 className: `block px-4 py-3 text-sm ${theme.text} hover:bg-slate-100 dark:hover:bg-slate-700`, 
                                 onclick: (ev) => {
                                     ev.preventDefault();
+                                    
+                                    // --- NYTT (Steg 3.2): Dynamisk opprettelse av 'valg'-objekt ---
+                                    const productOptions = state.productOptions[prod.id];
+                                    const initialValg = {};
+                                    if (productOptions) {
+                                        Object.keys(productOptions).forEach(key => {
+                                            // Sett standardvalg til null
+                                            initialValg[key] = null;
+                                        });
+                                    }
+                                    // --- SLUTT NYTT ---
+                                    
                                     const newItem = {
                                         id: Date.now(),
                                         productId: prod.id,
@@ -1704,7 +1774,8 @@
                                         pricePerUnit: 0, // Tvingar användaren att sätta pris
                                         notes: '',
                                         width: 100, // <-- NYTT: Standardbredde i cm
-                                        height: 100 // <-- NYTT: Standardhøyde i cm
+                                        height: 100, // <-- NYTT: Standardhøyde i cm
+                                        valg: initialValg // <-- NYTT (Steg 3.2)
                                     };
                                     const newItems = [...(state.formData.linkedProducts || []), newItem];
                                     update('linkedProducts', newItems);
@@ -1796,7 +1867,7 @@
                         })
                     ));
 
-                    // Pris per enhet
+                    // --- FIKS: Gjeninnfør manglende Pris/stk-felt ---
                     inputs.append(createElement('div', {},
                         createElement('label', { className: 'text-xs font-medium' }, 'Pris/stk (eks. mva)'),
                         createElement('input', { 
@@ -1811,6 +1882,55 @@
                             }
                         })
                     ));
+                    // --- SLUTT PÅ FIKS ---
+
+                    // --- NYTT: Dynamiske Valg-menyer (Steg 3.3) ---
+                    const optionsGrid = createElement('div', { className: 'grid grid-cols-1 md:grid-cols-3 gap-2 mt-2' });
+                    const productOptions = state.productOptions[item.productId];
+                    
+                    if (productOptions && item.valg) { // Sjekk at item.valg eksisterer (fra Steg 3.2)
+                        Object.entries(productOptions).forEach(([key, optionsArray]) => {
+                            // key = 'motor', 'duk', 'farge'
+                            // optionsArray = [ { value: '...', label: '...' }, ... ]
+                            
+                            const optionContainer = createElement('div', {});
+                            const label = createElement('label', { 
+                                className: 'text-xs font-medium capitalize' 
+                            }, key); // 'motor' -> 'Motor'
+                            
+                            const select = createElement('select', {
+                                className: `w-full p-2 rounded-md border ${theme.border} ${theme.cardBg} text-sm`,
+                                onchange: (e) => {
+                                    // Mål 2: Lagre valget i state
+                                    const p = q.linkedProducts.find(p => p.id === item.id);
+                                    const newValue = e.target.value === "" ? null : e.target.value;
+                                    p.valg[key] = newValue; // F.eks. p.valg['motor'] = 'somfy_io_6nm'
+                                    
+                                    // Oppdaterer state, men trigger IKKE prisberegning ennå
+                                    update('linkedProducts', q.linkedProducts); 
+                                }
+                            });
+
+                            // Legg til "Velg..."-alternativ
+                            const currentVal = item.valg[key];
+                            select.append(createElement('option', {
+                                value: "",
+                                selected: !currentVal
+                            }, `Velg ${key}...`));
+
+                            // Legg til alle valgene fra state.productOptions
+                            optionsArray.forEach(opt => {
+                                select.append(createElement('option', {
+                                    value: opt.value,
+                                    selected: opt.value === currentVal
+                                }, opt.label));
+                            });
+
+                            optionContainer.append(label, select);
+                            optionsGrid.append(optionContainer);
+                        });
+                    }
+                    // --- SLUTT PÅ NYTT ---
 
                     // Anteckningar
                     const notes = createElement('div', {},
@@ -1841,34 +1961,94 @@
                             const width = p.width || 0;
                             const height = p.height || 0;
                             const productId = p.productId; // Vi trenger productId
-                            
-                            // 1. Kalkuler Innkjøpspris
-                            const calc = getCalculatedInnkjøpspris(productId, width, height);
+                            const valg = p.valg || {}; // <-- Hent valgene
                             const feedbackEl = document.getElementById(`price-feedback-${item.id}`);
                             
-                            if(calc.error || calc.pris === null) {
-                                feedbackEl.textContent = calc.error || 'Ukjent feil ved prisberegning.';
+                            // --- START NY FIKS (Steg 4.3) ---
+                            // Sjekk om produktet har en ID. Gamle/importerte produkter har kanskje 'null'.
+                            if (!productId) {
+                                feedbackEl.textContent = 'Pris-matrise mangler. Koble til et nytt produkt fra listen.';
+                                feedbackEl.className = `text-xs text-red-500 italic mt-1`;
+                                return; // Avbryt beregningen
+                            }
+                            // --- SLUTT NY FIKS ---
+
+                            // 1. Kalkuler Innkjøpspris (Basispris)
+                            // --- KORRIGERT: Sender ikke 'valg' inn her ---
+                            const baseCalc = getCalculatedInnkjøpspris(productId, width, height);
+                            
+                            if(baseCalc.error || baseCalc.pris === null) {
+                                feedbackEl.textContent = baseCalc.error || 'Ukjent feil ved prisberegning.';
                                 feedbackEl.className = `text-xs text-red-500 italic mt-1`;
                                 p.pricePerUnit = 0; // Sett pris til 0 ved feil
-                            } else {
-                                // 2. Legg på globalt påslag (PoC)
-                                const veiledendePris = calc.pris * GLOBAL_MARKUP_MULTIPLIER;
-                                p.pricePerUnit = Math.round(veiledendePris); // Rund av til nærmeste krone
                                 
-                                feedbackEl.textContent = `Beregnet fra H:${calc.h}cm B:${calc.b}cm. Innkjøpspris: ${calc.pris} kr.`;
-                                feedbackEl.className = `text-xs ${theme.textSecondary} italic mt-1`;
+                                // Oppdater UI og state ved feil
+                                const priceInput = document.getElementById(`price-${item.id}`);
+                                if(priceInput) priceInput.value = p.pricePerUnit;
+                                update('linkedProducts', q.linkedProducts);
+                                return; // Stopp her
+                            } 
+
+                            // --- START NY LOGIKK (Steg 4.2 Korrigert) ---
+                            let currentInnkjøpspris = baseCalc.pris; // Startpris
+                            let basePrisForTillegg = baseCalc.pris; // Grunnlag for %-beregning
+                            let motorPris = 0;
+                            let tilleggFeedback = [];
+                            let feedbackText = `Base: ${baseCalc.pris} kr. `;
+                            
+                            // 2. Finn regler og legg på tillegg
+                            const rules = state.priceRules[productId];
+                            if (rules) {
+                                // Hent alle kategorier for dette produktet (f.eks. 'motor', 'duk', 'farge')
+                                const productOptionCategories = state.productOptions[productId] ? Object.keys(state.productOptions[productId]) : [];
+                                
+                                productOptionCategories.forEach(categoryKey => {
+                                    const selectedValue = valg[categoryKey]; // Hent valgt verdi (f.eks. 'fabric_blackout')
+                                    
+                                    // Sjekk om det finnes en regel for det valget
+                                    if (selectedValue && rules[categoryKey] && rules[categoryKey][selectedValue]) {
+                                        const rule = rules[categoryKey][selectedValue];
+                                        
+                                        if (rule.type === 'percent') {
+                                            // Prosent-tillegg (f.eks. duk, farge)
+                                            const increase = basePrisForTillegg * (rule.value / 100);
+                                            currentInnkjøpspris += increase; // Legg til i total innkjøpspris
+                                            tilleggFeedback.push(`+${rule.value}% (${selectedValue})`);
+                                        } else if (rule.type === 'flat') {
+                                            // Flat-tillegg (f.eks. motor)
+                                            motorPris += rule.value; // Legg til i separat motor-pott
+                                            tilleggFeedback.push(`+${rule.value} kr (${selectedValue})`);
+                                        }
+                                    }
+                                });
+
+                                // Legg til total motorpris til slutt
+                                currentInnkjøpspris += motorPris;
+                                feedbackText += `Tillegg: [${tilleggFeedback.join(', ') || 'Ingen'}]. Ny Innkjøpspris: ${Math.round(currentInnkjøpspris)} kr.`;
+
+                            } else {
+                                feedbackText = `Base (H:${baseCalc.h} B:${baseCalc.b}): ${currentInnkjøpspris} kr. Ingen regler funnet for ${productId}.`;
                             }
                             
-                            // 3. Oppdater UI (input-feltet)
+                            // 3. Legg på globalt påslag (GLOBAL_MARKUP_MULTIPLIER)
+                            const veiledendePris = currentInnkjøpspris * GLOBAL_MARKUP_MULTIPLIER;
+                            p.pricePerUnit = Math.round(veiledendePris); // Rund av
+                            // --- SLUTT NY LOGIKK ---
+                            
+                            feedbackEl.textContent = feedbackText; // Vis detaljert feedback
+                            feedbackEl.className = `text-xs ${theme.textSecondary} italic mt-1`;
+
+                            // 4. Oppdater UI (input-feltet)
                             const priceInput = document.getElementById(`price-${item.id}`);
                             if(priceInput) priceInput.value = p.pricePerUnit;
                             
-                            // 4. Oppdater state OG totalpris
+                            // 5. Oppdater state OG totalpris
                             update('linkedProducts', q.linkedProducts);
                         }
                     }, 'Beregn Pris (PoC)');
                     
-                    itemRow.append(header, inputs, notes, calcButton, priceFeedback);
+                    // --- MODIFISERT: La til optionsGrid ---
+                    itemRow.append(header, inputs, optionsGrid, notes, calcButton, priceFeedback);
                     listEl.append(itemRow);
                 });
             };
@@ -1952,44 +2132,37 @@
             const internalNotesSection = () => createSection('Interne Notater', 'internal', [ createTextarea('internalComment', 'Notater (kun synlig internt)') ]);
             // --- SLUTT PÅ MANGLENDE FUNKSJONER ---
 
-            const projectSummarySection = renderProjectSummary(q, theme, createSection); // <-- FIX: Pass createSection
+            const projectSummaryContent = renderProjectSummary(q, theme); // <-- FIX: Pass createSection
             // --- NYTT: Lägg till ett ID för Hotswap ---
-            const projectSummaryWrapper = createElement('div', { id: 'project-summary-section' }, projectSummarySection); // <-- FIX: Använd wrapper
+            // const projectSummaryWrapper = createElement('div', { id: 'project-summary-section' }, projectSummarySection); // <-- FIX: Använd wrapper
 
             const formWrapper = createElement('div', { className: 'flex-grow overflow-y-auto p-4 md:p-6 space-y-6' },
-                createSection('Kunde & Montering', 'info', [
-                    // --- START A1 IMPLEMENTATION REFINEMENT (Make Project ID editable/linkable) ---
-                    createProjectLinkerField('projectId', 'Tilknyttet Projekt (Rediger for å flytte/länke tilbudet)'), // <-- FIX: Tydeligere label
-                    // --- END A1 IMPLEMENTATION REFINEMENT ---
-                    createField('customer', 'Kundenavn'),
-                    // --- MODIFISERT: Fjernet redundant Emne-felt fra skjemaet ---
-                    // createField('emne', 'Emne', 'text', true), // <-- NYTT: Emne-felt i modal (full bredde)
-                    // --- SLUTT MODIFISERING ---
-                    createField('contactPerson', 'Kontaktperson'),
-                    createField('customerType', 'KundeType'),
-                    createField('customerIdNumber', 'Org/Personnummer'),
+                
+                // --- NY SEKSJON: Kundinformation ---
+                createSection('Kundinformation', 'customerInfo', [
+                    createField('customer', 'Kundenavn', 'text', true), // Full bredde
+                    createSelectField('customerType', 'Kundetype', [
+                        { value: 'Privat', label: 'Privat' },
+                        { value: 'Bedrift', label: 'Bedrift' }
+                    ]),
+                    createField('customerIdNumber', 'Orgnr. / Fødselsnr.', 'text'),
+                    createField('contactPerson', 'Kontaktperson', 'text'),
                     createField('contactEmail', 'E-post', 'email'),
                     createField('contactPhone', 'Telefon', 'tel'),
-                    createField('address', 'Adresse', 'text', true),
-                    createField('installationDate', 'Monteringsdato', 'date'),
-                    // --- MODIFISERT: Fjernet 'Starttid' ---
-                    // createField('installationStartTime', 'Starttid', 'time'),
-                    // --- SLUTT MODIFISERING ---
-                    // --- MODIFISERT: Byttet Sluttid (time) med Sluttdato (date) ---
-                    createField('installationEndDate', 'Sluttdato', 'date'),
-                    // --- SLUTT MODIFISERING ---
-                    // --- REMOVED FIELDS START ---
-                    // createField('sentDate', 'Tilbud sendt', 'text', false, true),
-                    // createField('approvedDate', 'Prosjekt godkjent', 'text', false, true)
-                    // --- REMOVED FIELDS END ---
+                    createField('address', 'Adresse (Montering)', 'text', true), // Full bredde
+                    createTextarea('customerRequests', 'Kundens ønsker') // Flyttet hit
                 ]),
+                // --- SLUTT NY SEKSJON ---
+
+                /* --- Prosjekt-seksjonen fjernet herfra --- */
+                
                 // --- NY PROJEKTSAMMANFATTNING HÄR ---
-                projectSummaryWrapper, // <-- FIX: Använd wrapper
+                // projectSummaryWrapper, // <-- A2: Flyttad
                 // ------------------------------------
                 // --- UPPDATERAD PRODUKTSEKTION ---
                 createSection('Produkt & Pris', 'product', [
                     createLinkedProductsFields()
-                    // BORTTAGEN: createTextarea('customerRequests', 'Kundens ønsker')
+                    // BORTTAGEN: createTextarea('customerRequests', 'Kundens ønsker') // <-- Flyttet til Kundinformation
                 ]),
                 createSection('Montører & Kostnader', 'costs', [
                     createField('numInstallers', 'Antall montörer', 'number'),
@@ -1998,7 +2171,21 @@
                 ]),
                  customCostsSection(),
                  staffSection(),
+                 // --- Prosjekt-seksjonen flyttet hit ---
+                 createSection('Prosjekt', 'info', [
+                    // --- START A2 (Kortare label) ---
+                    createProjectLinkerField('projectId', 'Tilknyttet Projekt'), // <-- FIX: Kortere label
+                    projectSummaryContent // <-- FLYTTET HIT
+                    // --- SLUTT A2 ---
+                    // createField('customer', 'Kundenavn'), // <-- BORTTAGEN SOM ÖNSKAT
+                    // --- MODIFISERT: Fjernet redundant Emne-felt fra skjemaet ---
+                    // createField('emne', 'Emne', 'text', true), // <-- NYTT: Emne-felt i modal (full bredde)
+                    // --- SLUTT MODIFISERING ---
+                ]),
                  internalNotesSection(),
+                 // --- START A2 (Flyttad sektion) ---
+                 // projectSummaryWrapper, // <-- Flyttad hit
+                 // --- SLUTT A2 ---
                  createElement('div', {className:'sm:col-span-2'}, createElement('p', {className:`text-xs ${theme.textSecondary}`}, `Tilbud ID: ${q.id}`))
             );
 
