@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prima Portal</title>
+    <title>Prima Sol Portal</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -105,7 +105,7 @@
                 lastError = errorMsg;
             }
         
-            console.error('Prima Portal Error:', errorMsg);
+            console.error('Prima Sol Portal Error:', errorMsg);
         
             // Only show fallback on first critical error
             if (errorCount === 1 && (errorMsg.includes('is not defined') || e.message.includes('Unexpected token'))) { // FIKS: Utvidet til å fange syntax-feil
@@ -114,7 +114,7 @@
                     appRootEl.innerHTML = `
                         <div class="min-h-screen bg-slate-50 flex items-center justify-center p-4">
                             <div class="text-center max-w-md">
-                                <h1 class="text-2xl font-bold text-slate-800 mb-4">Prima Portal</h1>
+                                <h1 class="text-2xl font-bold text-slate-800 mb-4">Prima Sol Portal</h1>
                                 <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
                                     <p class="text-yellow-800">System laster kjernefunksjoner...</p>
                                     <p class="text-sm text-yellow-600 mt-2">Om problemet fortsetter, kontakt support.</p>
@@ -302,7 +302,7 @@
         state.productSupplierFilter = 'all';
         // --- SLUTT NYTT STATE ---
 
-        const texts = { sv: { 'login.welcome': 'Velkommen til Prima Portalen', 
+        const texts = { sv: { 'login.welcome': 'Velkommen til Prima Sol Portalen', 
             // --- ENDRING ---
             'modal.edit_title': 'Rediger Tilbud', 
             'modal.create_title': 'Opprett Nytt Tilbud', 
@@ -2421,7 +2421,7 @@
                 appRoot.innerHTML = `
                     <div class="min-h-screen bg-slate-50 flex items-center justify-center">
                         <div class="text-center">
-                            <h1 class="text-2xl font-bold text-slate-800">Prima Portal</h1>
+                            <h1 class="text-2xl font-bold text-slate-800">Prima Sol Portal</h1>
                             <p class="text-slate-600 mt-2">Initialiserar system...</p>
                             <div class="mt-4">
                                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -3279,9 +3279,15 @@
 
             const sidebar = createElement('div', { className: `${isNavCollapsed ? 'w-20' : 'w-64'} ${theme.cardBg} border-r ${theme.border} h-screen flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out` }, // <-- MODIFISERT
                 createElement('div', { className: 'p-4 flex items-center justify-between' },  // <-- MODIFISERT
-                    createElement('h1', { className: `text-2xl font-bold ${theme.accent} overflow-hidden whitespace-nowrap` }, 
-                        createElement('span', { className: `transition-opacity duration-200 ${isNavCollapsed ? 'opacity-0' : 'opacity-100'}` }, 'Prima Portal') // <-- MODIFISERT
+                    // --- START LOGO-ENDRING ---
+                    createElement('h1', { className: `flex items-center h-10 overflow-hidden whitespace-nowrap` }, // Justert h1
+                        createElement('img', { 
+                            src: 'https://raw.githubusercontent.com/GusHem/Primasol/main/Prima%20Sol%20As%20Logga%202.svg',
+                            alt: 'Prima Sol As Logo',
+                            className: `h-10 w-auto transition-all duration-200 ${isNavCollapsed ? 'opacity-0 w-0' : 'opacity-100 w-auto'}` // Animerer bredde og opasitet
+                        })
                     ),
+                    // --- SLUTT LOGO-ENDRING ---
                     createElement('button', { // <-- NY KNAPP
                         className: `p-1 rounded ${theme.buttonSecondaryHover} flex-shrink-0`,
                         onclick: () => setState({ isNavCollapsed: !isNavCollapsed })
@@ -3317,7 +3323,13 @@
                 createElement('div', { 
                     className: `w-full max-w-sm ${theme.cardBg} p-8 rounded-2xl shadow-xl border ${theme.border} animate-fade-in-scale`
                 },
-                    createElement('h1', { className: `text-3xl font-bold text-center mb-2 ${theme.accent}` }, 'Prima Portal'),
+                    // --- START LOGO-ENDRING ---
+                    createElement('img', {
+                        src: 'https://raw.githubusercontent.com/GusHem/Primasol/main/Prima%20Sol%20As%20Logga%202.svg',
+                        alt: 'Prima Sol As Logo',
+                        className: 'h-12 w-auto mx-auto mb-2' // Sentrert logo
+                    }),
+                    // --- SLUTT LOGO-ENDRING ---
                     createElement('p', { className: `text-center ${theme.textSecondary} mb-6` }, t('login.welcome')),
                     createElement('button', {
                         id: 'login-button',
@@ -3429,7 +3441,7 @@
 
         // REPLACED old DOMContentLoaded with new async handler
         document.addEventListener('DOMContentLoaded', async () => {
-            console.log('🚀 Prima Portal initializing...');
+            console.log('🚀 Prima Sol Portal initializing...');
         
             // Initialize theme first (immediate visual feedback)
             const savedTheme = localStorage.getItem('prima-theme') || 'light';
@@ -3534,7 +3546,7 @@
                     }
                 }, 250);
             });
-            console.log(`✅ Prima Portal ready ${pdfReady ? 'with PDF' : 'without PDF'}`);
+            console.log(`✅ Prima Sol Portal ready ${pdfReady ? 'with PDF' : 'without PDF'}`);
             renderApp();
         });
 
