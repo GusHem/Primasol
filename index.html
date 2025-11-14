@@ -732,30 +732,68 @@
         const N8N_ENDPOINTS = { SAVE_QUOTE: 'primasol-save-quote-webhook', GET_QUOTES: 'quotes', SEND_PROPOSAL: 'quote/dispatch', DELETE_QUOTE: 'quote/delete' };
         
         function getPlaceholderQuotes() {
+            // --- DATAREDUKSJON (Per användarbegäran 14.11.2025) ---
+            // Kraftigt reducerat dataset för att enklare validera projekt ↔ tilbud-logik.
+            // --- ENDRING (per användarbegäran 14.11.2025): Bytter ut dåliga placeholder-IDn ---
             return [
-                // Project 1 (Shared)
-                { id: 'PS-1672614000000', recordId: 'rec002', status: 'förslag-skickat', projectStatus: 'nytt', customer: 'Hansen Bygg AS', contactPerson: 'Erik Hansen', contactEmail: 'erik@hansenbygg.no', address: 'Industriveien 2, Oslo', productCount: 2, installationDate: '2025-11-28', productUnitCost: 25000, productDescription: 'Terrassemarkise Modell 5000, 5x3m, grå duk.', total: 58240, assignedStaff: ['m1', 'm3'], projectId: 'PJ-2025-HANSEN', emne: 'Terrassemarkise Industriveien' }, // <-- NYTT: emne lagt til
-                { id: 'PS-1672700400000', recordId: 'rec003', status: 'utkast', projectStatus: 'nytt', customer: 'Hansen Bygg AS', contactPerson: 'Erik Hansen', contactEmail: 'erik@hansenbygg.no', address: 'Strandgaten 5, Bergen (Alternativ)', productCount: 5, installationDate: '2025-11-15', productUnitCost: 8000, productDescription: '5 stk Vertikalmarkise 85 (Budget).', total: 49280, assignedStaff: [], projectId: 'PJ-2025-HANSEN', emne: 'Vindusmarkiser Bergen (Budsjett)' }, // <-- NYTT: emne lagt til
+                // Projekt 1 (Enkelt tilbud)
+                { 
+                    id: 'PS-TEST-1', 
+                    recordId: 'rec_test_1', 
+                    status: 'godkänd', 
+                    projectStatus: 'planlagt', // Testar bootstrap-logik (planlagt > nytt)
+                    customer: 'Familien Olsen', 
+                    contactPerson: 'Per Olsen', 
+                    contactEmail: 'per@olsen.no', 
+                    address: 'Testveien 1, Oslo', 
+                    productCount: 1, 
+                    installationDate: '2025-11-20', 
+                    productUnitCost: 25000, 
+                    productDescription: 'Test-markise', 
+                    total: 30000, 
+                    assignedStaff: ['m1'], 
+                    projectId: 'OLSEN-2511', // <-- FIKS: Endret fra PJ-TEST-ENKEL
+                    emne: 'Markise Testveien' 
+                },
                 
-                // --- DATA REFACTORING: Tydligare projektgruppering ---
-                // Project 2 (Pettersen)
-                { id: 'PS-1672786800000', recordId: 'rec004', status: 'betald', projectStatus: 'fullført', customer: 'Familien Pettersen', contactPerson: 'Sofia Pettersen', contactEmail: 'sofia.p@mail.no', address: 'Utsiktsveien 12, Stavanger', productCount: 1, installationDate: '2025-09-12', productUnitCost: 75000, productDescription: 'Pergola med lamelltak, 4x4m, inkludert LED.', total: 95200, assignedStaff: ['m1', 'm2', 'm3'], projectId: 'PJ-2025-PETTERSEN', emne: 'Pergola Stavanger' }, // <-- NYTT: emne lagt til
-                
-                // Project 3 (Kommune)
-                { id: 'PS-1672873200000', recordId: 'rec005', status: 'förlorad', projectStatus: 'nytt', customer: 'Trondheim Kommune', contactPerson: 'Anders Persson', contactEmail: 'anders.p@kommunen.no', address: 'Rådhuset, Trondheim', productCount: 10, installationDate: '2025-11-01', productUnitCost: 7500, productDescription: 'Vindusmarkiser for skole.', total: 92400, assignedStaff: [], projectId: 'PJ-2025-KOMMUNE', emne: 'Vindusmarkiser Skole' }, // <-- NYTT: emne lagt til
-                
-                // Project 4 (Fjellhytta)
-                { id: 'PS-1672959600000', recordId: 'rec006', status: 'betald', projectStatus: 'fullført', customer: 'Fjellhytta AS', contactPerson: 'Eva Berg', contactEmail: 'eva.berg@hytte.no', address: 'Geilovegen 1, Geilo', productCount: 1, installationDate: '2025-09-05', productUnitCost: 32000, productDescription: 'Robust terrassemarkise for værutsatt hytte.', total: 39760, assignedStaff: ['m1'], projectId: 'PJ-2025-FJELLHYTTA', emne: 'Markise Fjellhytte' }, // <-- NYTT: emne lagt til
-                
-                // Project 5 (Nybygg - Delat)
-                { id: 'PS-1673046000000', recordId: 'rec007', status: 'utkast', projectStatus: 'nytt', customer: 'Innovate AS', contactPerson: 'Johan Lundgren', contactEmail: 'johan.l@foretag.no', address: 'Teknologiparken 8, Oslo', productCount: 3, installationDate: '2025-09-25', productUnitCost: 12000, productDescription: '3 stk Fasade Screen 120.', total: 44800, assignedStaff: ['m4'], projectId: 'PJ-2025-NYBYGG', emne: 'Screens Nybygg Oslo' }, // <-- NYTT: emne lagt til
-                { id: 'PS-1673218800000', recordId: 'rec009', status: 'förslag-skickat', projectStatus: 'nytt', customer: 'Arkitektkontoret AS', contactPerson: 'Stina Jansson', contactEmail: 'prosjekt@arkitekt.no', address: 'Byporten, Hamar', productCount: 8, installationDate: '2025-11-10', productUnitCost: 9000, productDescription: 'Diverse vindusmarkiser for nybygg.', total: 88480, assignedStaff: [], projectId: 'PJ-2025-NYBYGG', emne: 'Vindusmarkiser Nybygg Hamar' }, // <-- NYTT: emne lagt til
-                
-                // Project 6 (Privat - Delat)
-                { id: 'PS-1673132400000', recordId: 'rec008', status: 'godkänd', projectStatus: 'planlagt', customer: 'Familien Nilsen', contactPerson: 'Anna Nilsen', contactEmail: 'nilsen@mail.com', address: 'Hjemmeveien 12, Kristiansand', productCount: 1, installationDate: '2025-11-02', productUnitCost: 28000, productDescription: 'Terrassemarkise Modell 3000.', total: 35280, assignedStaff: ['m1', 'm3'], projectId: 'PJ-2025-PRIVAT', emne: 'Markise Kristiansand' }, // <-- NYTT: emne lagt til
-                { id: 'PS-1673305200000', recordId: 'rec010', status: 'godkänd', projectStatus: 'pågår', customer: 'Lina Andersson', contactPerson: 'Lina Andersson', contactEmail: 'lina.a@live.no', address: 'Leiligheten på toppen, Tromsø', productCount: 1, installationDate: '2025-09-28', productUnitCost: 15000, productDescription: 'Balkongmarkise', total: 20720, assignedStaff: ['m2'], projectId: 'PJ-2025-PRIVAT', emne: 'Balkongmarkise Tromsø' }, // <-- NYTT: emne lagt til
-                // --- SLUTT DATA REFACTORING ---
-            ].map(q => ({...q, projectId: q.projectId, customCosts:[], internalComment: '', customerRequests: '', installationEndDate: q.installationDate, linkedProducts: [], sentDate: null, approvedDate: null, emne: q.emne || 'Standardtilbud' })); // <-- MODIFIED installationEndTime -> installationEndDate (og satt til q.installationDate som default)
+                // Projekt 2 (Flera tilbud)
+                { 
+                    id: 'PS-TEST-2', 
+                    recordId: 'rec_test_2', 
+                    status: 'utkast', 
+                    projectStatus: 'nytt', 
+                    customer: 'Bygg AS', 
+                    contactPerson: 'Byggmester Bob', 
+                    contactEmail: 'bob@bygg.no', 
+                    address: 'Industrigata 5, Bergen', 
+                    productCount: 5, 
+                    installationDate: '2025-12-01', 
+                    productUnitCost: 8000, 
+                    productDescription: '5 stk Screens (Alternativ 1)', 
+                    total: 45000, 
+                    assignedStaff: [], 
+                    projectId: 'BYGG-AS-2512', // <-- FIKS: Endret fra PJ-TEST-FLER
+                    emne: 'Screens Industrigata (Billig)' 
+                },
+                { 
+                    id: 'PS-TEST-3', 
+                    recordId: 'rec_test_3', 
+                    status: 'förslag-skickat', 
+                    projectStatus: 'nytt', 
+                    customer: 'Bygg AS', 
+                    contactPerson: 'Byggmester Bob', 
+                    contactEmail: 'bob@bygg.no', 
+                    address: 'Industrigata 5, Bergen', 
+                    productCount: 5, 
+                    installationDate: '2025-12-01', 
+                    productUnitCost: 12000, 
+                    productDescription: '5 stk Screens (Alternativ 2 - Premium)', 
+                    total: 65000, 
+                    assignedStaff: [], 
+                    projectId: 'BYGG-AS-2512', // <-- FIKS: Endret fra PJ-TEST-FLER
+                    emne: 'Screens Industrigata (Premium)' 
+                }
+            ].map(q => ({...q, projectId: q.projectId, customCosts:[], internalComment: '', customerRequests: '', installationEndDate: q.installationDate, linkedProducts: [], sentDate: null, approvedDate: null, emne: q.emne || 'Standardtilbud' }));
         }
 
         class DataService {
@@ -1440,7 +1478,10 @@
                         });
                     }
                 },
-                    createElement('span', { className: 'font-medium truncate' }, `${s.customer} (${s.address})`),
+                    // --- START ENDRING (per användarbegäran 14.11.2025) ---
+                    // Byttet ut s.customer (som var förvirrande) med s.emne (tilbudets navn)
+                    createElement('span', { className: 'font-medium truncate' }, `${s.emne || 'Standardtilbud'} (${s.address})`),
+                    // --- SLUTT ENDRING ---
                     createElement('span', { className: `px-3 py-0.5 rounded-full text-xs font-semibold ${pillStyle}` }, t(`status.${s.status}`))
                 ));
             });
@@ -3404,7 +3445,8 @@
             
             const createCard = (q) => {
                 const details = calculatePriceDetails(q);
-                const hasSiblings = getSiblingQuotes(q).length > 0; 
+                // --- FIKS: Fjerner 'hasSiblings'-logikk herfra. Vi trenger den ikke lenger for denne sjekken. ---
+                // const hasSiblings = getSiblingQuotes(q).length > 0; 
 
                 // --- Emne-elementet (behålls) ---
                 const emneElement = createElement('h3', { 
@@ -3452,21 +3494,52 @@
                 
                 // --- PROJEKTBADGE (MODIFISERT FOR NY POSISJON OG INNHOLD) ---
                 let projectBadgeElement;
-                if (hasSiblings) {
-                    projectBadgeElement = createElement('button', {
-                        // --- MODIFIED: Fjernet absolute posisjonering, la til margin ---
-                        className: `text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-150 mt-2`, // <-- NY STIL
-                        // --- END MODIFICATION ---
-                        title: `Gå til Prosjekt ${q.projectId}`,
+                
+                // --- START ENDRING (per användarbegäran 14.11.2025) ---
+                // Betingelsen endret fra 'if (hasSiblings)' til 'if (q.projectId)'.
+                // Nå vil ALLE tilbud som er koblet til et prosjekt vise taggen,
+                // ikke bare de som har søsken.
+                if (q.projectId) { 
+                // --- SLUTT ENDRING ---
+        
+                    // --- START ENDRING (per användarbegäran 14.11.2025) ---
+                    // Hent det "vennlige" prosjektnavnet (kundenavnet) fra state.projects
+                    const project = state.projects.find(p => p.projectId === q.projectId);
+                    // Bruk kundenavnet hvis det finnes, ellers fall tilbake til teknisk ID
+                    const projectName = project ? (project.customerName || q.projectId) : q.projectId; // Sikker fallback
+                    // --- SLUTT ENDRING ---
+
+                    // 1. Skapa en wrapper-div
+                    const wrapper = createElement('div', { className: 'mt-2' }); // Beholder toppmargin
+        
+                    // 2. Legg til texten "Prosjekt" over taggen
+                    const projectLabel = createElement('label', {
+                        className: `text-xs font-semibold uppercase ${theme.textSecondary}`
+                    }, 'Prosjekt');
+        
+                    // 3. Skapa den nya tagg-knappen (med ikon)
+                    const projectTagButton = createElement('button', {
+                        className: `text-sm font-semibold px-3 py-1 rounded-lg bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors duration-150 mt-1 flex items-center gap-2`, // Justert stil (litt større, m/gap)
+                        title: `Gå til Prosjekt ${projectName}`, // <-- ENDRET: Bruker projectName
                         onclick: (e) => {
                             e.stopPropagation(); 
                             setState({ activeView: 'projects' });
                             console.log(`Navigerer til prosjekt: ${q.projectId}`);
                         }
-                    }, q.projectId); // <-- MODIFIED: Viser projectId i stedet for 'Prosjekt'
+                    });
+        
+                    // 4. Legg til ikon og text i knappen
+                    projectTagButton.innerHTML = icons.projects('w-4 h-4'); // Ikon
+                    projectTagButton.append(projectName); // <-- ENDRET: Bruker projectName
+        
+                    // 5. Sett sammen den nya badge-elementet
+                    wrapper.append(projectLabel, projectTagButton);
+                    projectBadgeElement = wrapper;
+        
+                    // --- SLUTT ENDRING ---
                 } else {
                     // --- MODIFIED: Lag en tom div for å beholde høyden hvis det IKKE er en badge ---
-                    projectBadgeElement = createElement('div', { className: 'h-10' }); // <-- Gjeninnfør spaceren KUN her
+                    projectBadgeElement = createElement('div', { className: 'h-14' }); // <-- Gjeninnfør spaceren KUN her (høyde justert fra h-10)
                 }
                 // --- SLUTT PÅ MODIFISERING ---
 
