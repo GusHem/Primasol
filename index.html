@@ -619,7 +619,8 @@
         };
 
         const N8N_BASE_URL = 'https://nordsym.app.n8n.cloud/webhook/';
-        const N8N_ENDPOINTS = { SAVE_QUOTE: 'guldkant-offer-intake-v2', GET_QUOTES: 'quotes', SEND_PROPOSAL: 'quote/dispatch', DELETE_QUOTE: 'quote/delete' };
+        // --- MODIFIERAT: Bytt ut specifik 'guldkant'-webhook mot en Prima Sol-platshållare ---
+        const N8N_ENDPOINTS = { SAVE_QUOTE: 'primasol-save-quote-webhook', GET_QUOTES: 'quotes', SEND_PROPOSAL: 'quote/dispatch', DELETE_QUOTE: 'quote/delete' };
         
         function getPlaceholderQuotes() {
             return [
@@ -3131,7 +3132,8 @@
                 
                 // NY VENSTRE/SENTRUM-BLOKK (Fleksibel)
                 createElement('div', { className: 'flex-grow flex flex-col md:flex-row md:items-center gap-4' }, 
-                    createElement('h2', { className: 'text-3xl font-bold flex-shrink-0' }, t('nav.quotes')), // Tittel
+                    // --- MODIFISERT: Fjernet redundant <h2>-tittel ---
+                    // createElement('h2', { className: 'text-3xl font-bold flex-shrink-0' }, t('nav.quotes')), // Tittel
                     
                     // --- KONTROLLER FLYTTET HIT ---
                     filterButton,
