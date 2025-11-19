@@ -195,7 +195,7 @@
                 </div>
 
                 <!-- 2. RESULTAT & LÄGG TILL (Fixat ID och inre struktur) -->
-                <div id="result-panel" class="bg-white rounded-xl shadow-md border border-green-200 overflow-hidden hidden transition-all duration-500 transform translate-y-4 opacity-0">
+                <div id="result-panel" class="bg-white rounded-xl shadow-md border border-green-200 z-10 hidden transition-all duration-500 transform translate-y-4 opacity-0">
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-5 border-b border-green-100">
                         <div class="flex justify-between items-start">
                             <div>
@@ -215,7 +215,7 @@
                         </div>
                     </div>
                     
-                    <div class="p-5 bg-white space-y-4">
+                    <div class="p-5 bg-white space-y-4 relative z-20 pointer-events-auto">
                         <!-- Rabatt -->
                         <div>
                             <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Rabatt (%)</label>
@@ -248,9 +248,17 @@
                     <!-- Accessories -->
                     <div class="grid grid-cols-1 gap-2 mb-4">
                         <select id="acc-cat" class="w-full p-2 border border-slate-200 bg-slate-50 rounded text-xs">
-                             <option value="">-- Välj kategori --</option>
-                             <option value="control">Styrning & Fjärrkontroller</option>
-                             <option value="brackets">Fästen & Beslag</option>
+                             <option value="">-- Velg kategori --</option>
+                             <option value="faher_remote_uni">Faher Fjernkontroll (Uni-Directional)</option>
+                             <option value="faher_remote_bi">Faher Fjernkontroll (Bi-Directional)</option>
+                             <option value="faher_veggbrytere">Faher Veggbrytere</option>
+                             <option value="somfy_remote_rts">Somfy RTS Fjernkontroll</option>
+                             <option value="somfy_remote_io">Somfy io Fjernkontroll</option>
+                             <option value="somfy_veggbrytere">Somfy Veggbrytere</option>
+                             <option value="sensorer">Sol/Vind/Temperatur Sensorer</option>
+                             <option value="smart_hubs">Smart Home Hubs</option>
+                             <option value="kablar_tillbehor">Kabler & Tilbehør</option>
+                             <option value="services">Tjenester (Montering/Frakt)</option>
                         </select>
                         <div class="flex gap-2">
                             <select id="acc-item" class="flex-1 p-2 border border-slate-200 bg-slate-50 rounded text-xs" disabled>
@@ -432,17 +440,97 @@
 
         // --- TILLBEHÖRS-DATABAS (Ny) ---
         const accessoriesDb = {
-            "control": [
-                { id: "remote_1", name: "1-kanals fjärr", price: 450 },
-                { id: "remote_5", name: "5-kanals fjärr", price: 890 },
-                { id: "remote_wall", name: "Väggsändare", price: 550 },
-                { id: "sun_sensor", name: "Solsensor", price: 1200 },
-                { id: "wind_sensor", name: "Vindsensor", price: 1500 }
+            "faher_remote_uni": [
+                { id: "dc250", name: "DC 250 (1-kanal, Hvit)", price: 221 },
+                { id: "dc251", name: "DC 251 (5-kanal, Hvit)", price: 280 },
+                { id: "dc262", name: "DC 262 (15-kanal, Hvit)", price: 400 },
+                { id: "dc356", name: "DC 356 (9-kanal)", price: 521 },
+                { id: "dc921", name: "DC 921 (5-kanal + timer)", price: 560 },
+                { id: "dc308", name: "DC 308 (15-kanal + timer)", price: 660 },
+                { id: "dc305w", name: "DC 305 (1-kanal, Hvit)", price: 381 },
+                { id: "dc305b", name: "DC 305 (1-kanal, Svart)", price: 400 },
+                { id: "dc306w", name: "DC 306 (5-kanal, Hvit)", price: 440 },
+                { id: "dc306b", name: "DC 306 (5-kanal, Svart)", price: 461 },
+                { id: "dc313w", name: "DC 313 (15-kanal, Hvit)", price: 475 },
+                { id: "dc313b", name: "DC 313 (15-kanal, Svart)", price: 580 }
             ],
-            "brackets": [
-                { id: "bracket_std", name: "Standardbeslag", price: 150 },
-                { id: "bracket_ext", name: "Förlängningsbeslag", price: 250 },
-                { id: "bracket_side", name: "Sidobelegg", price: 180 }
+            "faher_remote_bi": [
+                { id: "dd250h", name: "Faher DD 250H (1-kanal Bi, Hvit)", price: 260 },
+                { id: "dd251h", name: "Faher DD 251H (5-kanal Bi, Hvit)", price: 280 },
+                { id: "dd2700h", name: "Faher DD 2700H (5-kanal timer)", price: 341 },
+                { id: "dd2702h", name: "Faher DD 2702H (5-kanal timer)", price: 368 },
+                { id: "dd2705h", name: "Faher DD 2705H (15-kanal)", price: 345 },
+                { id: "dd1805h", name: "Faher DD 1805H (15-kanal LCD)", price: 485 },
+                { id: "dd2770h", name: "Faher DD 2770H (1-kanal)", price: 341 },
+                { id: "dd2773h", name: "Faher DD 2773H (15-kanal)", price: 378 }
+            ],
+            "faher_veggbrytere": [
+                { id: "dc315", name: "Faher DC 315 (1-kanal vegg)", price: 341 },
+                { id: "dc316", name: "Faher DC 316 (2-kanal vegg)", price: 400 },
+                { id: "dc317", name: "Faher DC 317 (5-kanal vegg)", price: 560 },
+                { id: "dc409", name: "Faher DC 409 (15-kanal vegg)", price: 602 },
+                { id: "dc229a", name: "Faher DC 229A (1-kanal vegg)", price: 341 },
+                { id: "dc230a", name: "Faher DC 230A (2-kanal vegg)", price: 400 },
+                { id: "dc559", name: "Faher DC 559 (1-kanal vegg)", price: 447 },
+                { id: "dc660", name: "Faher DC 660 (2-kanal vegg)", price: 521 },
+                { id: "dc661", name: "Faher DC 661 (5-kanal vegg)", price: 602 }
+            ],
+            "somfy_remote_rts": [
+                { id: "situo1_rts_pure", name: "Situo 1 RTS Pure II", price: 596 },
+                { id: "situo5_rts_pure", name: "Situo 5 RTS Pure II", price: 760 },
+                { id: "situo1_soliris_rts", name: "Situo 1 Soliris RTS Pure II", price: 910 },
+                { id: "situo1_var_rts", name: "Situo 1 Var RTS Pure II (Scroll)", price: 1075 },
+                { id: "situo5_var_rts", name: "Situo 5 Var RTS Pure II (Scroll)", price: 1441 },
+                { id: "telis1_rts_patio", name: "Telis 1 RTS Patio (Vanntett)", price: 706 },
+                { id: "telis16_rts_pure", name: "Telis 16 RTS Pure (16-kanal)", price: 2250 },
+                { id: "telis6_chronis_rts", name: "Telis 6 Chronis RTS (Timer)", price: 2871 }
+            ],
+            "somfy_remote_io": [
+                { id: "situo1_io_pure", name: "Situo 1 io Pure II", price: 781 },
+                { id: "situo1_io_iron", name: "Situo 1 io Iron II", price: 781 },
+                { id: "situo5_io_pure", name: "Situo 5 io Pure II", price: 1220 },
+                { id: "situo5_io_iron", name: "Situo 5 io Iron II", price: 1238 },
+                { id: "situo1_var_io", name: "Situo 1 Var io Pure II (Scroll)", price: 2037 },
+                { id: "nina_timer_io", name: "Nina Timer io (Touch)", price: 3064 }
+            ],
+            "somfy_veggbrytere": [
+                 { id: "smoove_origin_rts", name: "Smoove Origin RTS", price: 513 },
+                 { id: "smoove_rts_pure", name: "Smoove RTS Pure (Touch)", price: 719 },
+                 { id: "smoove_rts_black", name: "Smoove RTS Black (Touch)", price: 719 },
+                 { id: "smoove_rts_silver", name: "Smoove RTS Silver (Touch)", price: 719 },
+                 { id: "smoove_origin_io", name: "Smoove Origin io", price: 741 },
+                 { id: "smoove_1_io_pure", name: "Smoove 1 io Pure (Touch)", price: 719 },
+                 { id: "smoove_1_io_black", name: "Smoove 1 io Black (Touch)", price: 741 }
+            ],
+            "sensorer": [
+                { id: "dc116", name: "Faher DC 116 (Sol/Vind)", price: 700 },
+                { id: "dc1187", name: "Faher DC 1187 (Sol/Vind m/automatikk)", price: 700 },
+                { id: "eolis_rts", name: "Somfy Eolis Sensor RTS (Vind)", price: 1164 },
+                { id: "soliris_rts", name: "Somfy Soliris Sensor RTS (Sol/Vind)", price: 1431 },
+                { id: "sunis_rts", name: "Somfy Sunis WireFree RTS (Sol)", price: 1229 },
+                { id: "sunis_io", name: "Somfy Sunis WireFree II io (Sol)", price: 1513 },
+                { id: "eolis_io", name: "Somfy Eolis WireFree io (Vind)", price: 1962 }
+            ],
+            "smart_hubs": [
+                { id: "dd1554", name: "Faher Mini Bridge Wi-Fi Hub", price: 1103 },
+                { id: "dd7006", name: "Faher P-Box Hub (Control4/Crestron)", price: 2140 },
+                { id: "tahoma_switch", name: "Somfy TaHoma Switch Pro", price: 2990 },
+                { id: "connexoon_io", name: "Somfy Connexoon BOX io", price: 2176 },
+                { id: "tahoma_dock", name: "Somfy TaHoma Serenity Dock", price: 3688 }
+            ],
+            "kablar_tillbehor": [
+                { id: "cable_somfy_90cm", name: "Somfy kabel 90cm m/STAS3", price: 300 },
+                { id: "cable_somfy_3m", name: "Somfy kabel 3m u/STAS3", price: 400 },
+                { id: "cable_somfy_10m", name: "Somfy forlengelseskabel 10m", price: 550 },
+                { id: "hirschmann_stak3", name: "Hirschmann STAK 3 (Hunn)", price: 65 },
+                { id: "hirschmann_stas3", name: "Hirschmann STAS 3 (Hann)", price: 65 }
+            ],
+            "services": [
+                { id: "montering_time", name: "Montering (per time)", price: 950 },
+                { id: "frakt_std", name: "Frakt (Standard)", price: 500 },
+                { id: "frakt_exp", name: "Frakt (Ekspress)", price: 1200 },
+                { id: "kranbil", name: "Kranbil (per time)", price: 1800 },
+                { id: "oppmaling", name: "Oppmåling / Befaring", price: 750 }
             ]
         };
 
@@ -906,7 +994,7 @@
             resQty: document.getElementById('res-qty'),
             resDiscount: document.getElementById('res-discount'),
             
-            calcBtn: document.getElementById('calc-btn'),
+            calcBtn: document.getElementById('calculate-btn'),
             
             // Tillbehör (Fixat element)
             accCat: document.getElementById('acc-cat'),
@@ -1124,7 +1212,10 @@
         }
 
         function clearCalc() {
-            if(el.resPanel) el.resPanel.classList.add('hidden');
+            if(el.resPanel) {
+                el.resPanel.classList.add('hidden', 'translate-y-4', 'opacity-0');
+                el.resPanel.classList.remove('translate-y-0', 'opacity-100');
+            }
             currentCalc = null;
         }
 
@@ -1210,7 +1301,12 @@
             
             if(el.resDims) el.resDims.innerText = currentCalc.dims;
             if(el.resDetails) el.resDetails.innerText = `${currentCalc.details}`;
-            if(el.resPanel) el.resPanel.classList.remove('hidden');
+            
+            if(el.resPanel) {
+                // Ta bort alla animations-klasser OCH hidden samtidigt för omedelbar interaktivitet
+                el.resPanel.classList.remove('hidden', 'translate-y-4', 'opacity-0');
+                el.resPanel.classList.add('translate-y-0', 'opacity-100');
+            }
         }
 
         function updateDiscountDisplay() {
