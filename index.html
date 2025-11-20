@@ -22,8 +22,8 @@
         /* Utskriftsanpassning */
         @media print {
             body { background: white; }
-            #main-layout { display: block; }
-            #config-panel, #ai-panel, #header-controls, .no-print { display: none !important; }
+            #view-calculator { display: block; }
+            #config-panel, #ai-panel, #header-controls, #main-nav, .no-print { display: none !important; }
             #quote-section { width: 100%; border: none; shadow: none; }
             #quote-items, #accessories-container { overflow: visible; height: auto; }
             header { border-bottom: 2px solid #000; margin-bottom: 20px; }
@@ -46,6 +46,16 @@
                     <p class="text-xs text-slate-500">Neva & Screen Prislister</p>
                 </div>
             </div>
+
+            <!-- NY NAVIGASJON (MENY) -->
+            <nav id="main-nav" class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
+                <button onclick="switchView('dashboard')" id="nav-dashboard" class="px-4 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition flex items-center gap-2">
+                    <i class="fa-solid fa-list-ul"></i> Oversikt
+                </button>
+                <button onclick="switchView('calculator')" id="nav-calculator" class="px-4 py-2 rounded-md text-sm font-medium bg-white text-blue-700 shadow-sm flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle"></i> Nytt Tilbud
+                </button>
+            </nav>
             
             <div id="header-controls" class="flex items-center gap-4">
                 <div class="text-right hidden sm:block">
@@ -60,7 +70,83 @@
     </header>
 
     <main class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
-        <div id="main-layout" class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-8rem)]">
+        
+        <!-- VIEW 1: DASHBOARD / OVERSIKT -->
+        <div id="view-dashboard" class="hidden h-full fade-in">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <div class="p-6 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Mine Tilbud</h2>
+                        <p class="text-sm text-slate-500">Oversikt over aktive og arkiverte tilbud</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="relative">
+                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                            <input type="text" placeholder="Søk etter kunde eller ref..." class="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <button onclick="switchView('calculator')" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> Opprett Nytt
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 text-slate-500 font-medium uppercase text-xs border-b border-slate-200">
+                            <tr>
+                                <th class="px-6 py-4">Ref #</th>
+                                <th class="px-6 py-4">Kunde</th>
+                                <th class="px-6 py-4">Dato</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4 text-right">Beløp (Eks. MVA)</th>
+                                <th class="px-6 py-4 text-center">Handling</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-700">
+                            <!-- Mock Data Row 1 -->
+                            <tr class="hover:bg-slate-50 transition group cursor-pointer">
+                                <td class="px-6 py-4 font-mono text-slate-500">REF-83921</td>
+                                <td class="px-6 py-4 font-medium">Ola Nordmann<div class="text-xs text-slate-400 font-normal">Oslo</div></td>
+                                <td class="px-6 py-4">19.11.2025</td>
+                                <td class="px-6 py-4"><span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-[10px] font-bold border border-green-200 uppercase tracking-wide">Akseptert</span></td>
+                                <td class="px-6 py-4 text-right font-bold text-slate-900">42 500 NOK</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-slate-400 hover:text-blue-600 transition bg-white border border-slate-200 rounded p-2 shadow-sm"><i class="fa-solid fa-eye"></i></button>
+                                </td>
+                            </tr>
+                            <!-- Mock Data Row 2 -->
+                            <tr class="hover:bg-slate-50 transition group cursor-pointer">
+                                <td class="px-6 py-4 font-mono text-slate-500">REF-77210</td>
+                                <td class="px-6 py-4 font-medium">Kari Hansen<div class="text-xs text-slate-400 font-normal">Bergen</div></td>
+                                <td class="px-6 py-4">18.11.2025</td>
+                                <td class="px-6 py-4"><span class="bg-blue-50 text-blue-600 px-2.5 py-1 rounded-full text-[10px] font-bold border border-blue-100 uppercase tracking-wide">Sendt</span></td>
+                                <td class="px-6 py-4 text-right font-bold text-slate-900">15 200 NOK</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button class="text-slate-400 hover:text-blue-600 transition bg-white border border-slate-200 rounded p-2 shadow-sm"><i class="fa-solid fa-eye"></i></button>
+                                </td>
+                            </tr>
+                             <!-- Mock Data Row 3 -->
+                             <tr class="hover:bg-slate-50 transition group cursor-pointer">
+                                <td class="px-6 py-4 font-mono text-slate-500">REF-12094</td>
+                                <td class="px-6 py-4 font-medium">Peder Ås<div class="text-xs text-slate-400 font-normal">Drammen</div></td>
+                                <td class="px-6 py-4">15.11.2025</td>
+                                <td class="px-6 py-4"><span class="bg-slate-100 text-slate-500 px-2.5 py-1 rounded-full text-[10px] font-bold border border-slate-200 uppercase tracking-wide">Utkast</span></td>
+                                <td class="px-6 py-4 text-right font-bold text-slate-900">8 900 NOK</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button onclick="switchView('calculator')" class="text-slate-400 hover:text-blue-600 transition bg-white border border-slate-200 rounded p-2 shadow-sm"><i class="fa-solid fa-pen"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-4 border-t border-slate-200 bg-slate-50 text-center">
+                    <button class="text-xs text-slate-500 hover:text-slate-800 font-medium uppercase tracking-wide">Vis alle tilbud (14)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 2: CALCULATOR (TIDLIGERE MAIN LAYOUT) -->
+        <div id="view-calculator" class="grid grid-cols-1 lg:grid-cols-12 gap-8 h-[calc(100vh-8rem)]">
 
             <!-- VÄNSTER: Konfigurator (5 kolumner) -->
             <div id="config-panel" class="lg:col-span-5 flex flex-col gap-6 overflow-y-auto custom-scroll pr-2 pb-10">
@@ -127,7 +213,7 @@
                                 <span id="dim-limits" class="text-[10px] text-blue-600 bg-white px-2 rounded-full border border-blue-200 hidden"></span>
                             </div>
                             
-                            <!-- Mått Feedback (Fixad saknad div) -->
+                            <!-- Mått Feedback -->
                             <div id="dim-visual-q" class="hidden rounded px-3 py-2 flex items-center gap-2 text-xs transition-colors mb-3">
                                 <span id="dim-text"></span>
                             </div>
@@ -194,7 +280,7 @@
                     </div>
                 </div>
 
-                <!-- 2. RESULTAT & LÄGG TILL (Fixat ID och inre struktur) -->
+                <!-- 2. RESULTAT & LÄGG TILL -->
                 <div id="result-panel" class="bg-white rounded-xl shadow-md border border-green-200 z-10 hidden transition-all duration-500 transform translate-y-4 opacity-0">
                     <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-5 border-b border-green-100">
                         <div class="flex justify-between items-start">
@@ -210,7 +296,7 @@
                             </div>
                             <div class="text-right text-xs text-slate-500">
                                 <p id="res-dims" class="font-mono font-bold">--</p>
-                                <p id="res-details" class="italic text-[10px] mt-1 text-slate-400">Inkl. motorval</p>
+                                <p id="res-details" class="italic text-[10px] mt-1 text-slate-400">Inkl. motorvalg</p>
                             </div>
                         </div>
                     </div>
@@ -238,7 +324,7 @@
                     </div>
                 </div>
 
-                <!-- 3. TILLBEHÖR & TJÄNSTER (Fixad saknad sektion) -->
+                <!-- 3. TILLBEHÖR & TJÄNSTER -->
                 <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
                      <div class="flex items-center gap-2 mb-3">
                         <i class="fa-solid fa-screwdriver-wrench text-slate-400"></i>
@@ -290,10 +376,12 @@
 
             </div>
 
-            <!-- HÖGER: Offertöversikt / Varukorg (7 kolumner) -->
-            <div class="lg:col-span-7 flex flex-col gap-6 h-full">
+            <!-- HÖGER: Offertöversikt + AI Assistent -->
+            <div class="lg:col-span-7 flex flex-col gap-6 h-[calc(100vh-8rem)] overflow-y-auto custom-scroll pb-10">
                 
-                <div id="quote-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col min-h-[600px]">
+                <!-- OFFERT SEKTION -->
+                <div id="quote-section" class="bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col min-h-[500px]">
+                    
                     <!-- Quote Header -->
                     <div class="px-6 py-4 border-b border-slate-200 bg-slate-50/80 rounded-t-2xl flex justify-between items-center">
                         <div>
@@ -319,9 +407,9 @@
                     </div>
 
                     <!-- Quote Items (Products) -->
-                    <div id="quote-items" class="flex-1 overflow-y-auto custom-scroll p-2 space-y-1 bg-white">
+                    <div id="quote-items" class="flex-1 overflow-y-auto custom-scroll p-2 space-y-1 bg-white min-h-[300px]">
                         <!-- Empty State -->
-                        <div id="empty-state" class="flex flex-col items-center justify-center h-full text-slate-300">
+                        <div id="empty-state" class="flex flex-col items-center justify-center h-full text-slate-300 py-10">
                             <i class="fa-solid fa-cart-arrow-down text-5xl mb-3 opacity-20"></i>
                             <p class="text-sm font-medium">Listen er tom</p>
                             <p class="text-xs">Gjør en beregning til venstre for å starte</p>
@@ -350,20 +438,22 @@
                             </button>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- AI Panel (Flyttet hit og oppdatert til norsk) -->
-                <div id="ai-panel" class="bg-indigo-50 rounded-xl border border-indigo-100 p-4 flex items-start gap-3 no-print">
-                    <div class="bg-white p-2 rounded-full text-indigo-600 shadow-sm flex-shrink-0">
-                        <i class="fa-solid fa-robot"></i>
+                <!-- AI Panel (Flyttad hit) -->
+                <div id="ai-panel" class="bg-indigo-50 rounded-xl border border-indigo-100 p-5 flex items-start gap-4 shadow-sm">
+                    <div class="bg-white p-3 rounded-full text-indigo-600 shadow-sm flex-shrink-0">
+                        <i class="fa-solid fa-robot text-xl"></i>
                     </div>
                     <div class="flex-1 min-w-0">
                         <h3 class="text-sm font-bold text-indigo-900">Produktassistent</h3>
-                        <div class="flex gap-2 mt-2">
-                            <input type="text" id="ai-input" class="w-full text-xs p-2 rounded border border-indigo-200 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="Spør om f.eks RS Smart XL...">
-                            <button onclick="handleChat()" class="bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700 transition">Spør</button>
+                        <p class="text-xs text-indigo-700 mb-3">Spør meg om tekniske detaljer, maksbredder eller motoralternativer.</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="ai-input" class="w-full text-sm p-2.5 rounded-lg border border-indigo-200 focus:ring-2 focus:ring-indigo-500 outline-none bg-white" placeholder="Eks: Hva er maks bredde på RS Smart XL?">
+                            <button onclick="handleChat()" class="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-bold hover:bg-indigo-700 transition shadow-sm">Spør</button>
                         </div>
-                        <div id="ai-response" class="hidden mt-2 text-xs text-slate-700 bg-white p-2 rounded border border-indigo-100 shadow-sm leading-relaxed"></div>
+                        <div id="ai-response" class="hidden mt-3 text-sm text-slate-700 bg-white p-3 rounded-lg border border-indigo-100 shadow-sm leading-relaxed"></div>
                     </div>
                 </div>
 
@@ -372,6 +462,30 @@
     </main>
 
     <script>
+        // --- VIEW SWITCHING LOGIC ---
+        function switchView(viewName) {
+            const dash = document.getElementById('view-dashboard');
+            const calc = document.getElementById('view-calculator');
+            const btnDash = document.getElementById('nav-dashboard');
+            const btnCalc = document.getElementById('nav-calculator');
+            
+            if (viewName === 'dashboard') {
+                dash.classList.remove('hidden');
+                calc.classList.add('hidden');
+                
+                // Active State Dashboard
+                btnDash.className = "px-4 py-2 rounded-md text-sm font-medium bg-white text-blue-700 shadow-sm flex items-center gap-2 transition-all";
+                btnCalc.className = "px-4 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition flex items-center gap-2";
+            } else {
+                dash.classList.add('hidden');
+                calc.classList.remove('hidden');
+                
+                // Active State Calculator
+                btnCalc.className = "px-4 py-2 rounded-md text-sm font-medium bg-white text-blue-700 shadow-sm flex items-center gap-2 transition-all";
+                btnDash.className = "px-4 py-2 rounded-md text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white transition flex items-center gap-2";
+            }
+        }
+
         // --- DATABAS ---
         const database = {
             "screen_2025": {
@@ -1362,7 +1476,7 @@
                 id: Date.now(),
                 type: 'accessory',
                 name: name,
-                details: 'Tillbehör',
+                details: 'Tilbehør',
                 price: price,
                 qty: qty,
                 total: price * qty
@@ -1383,7 +1497,7 @@
                 id: Date.now(),
                 type: 'service',
                 name: type,
-                details: 'Tjänst',
+                details: 'Tjeneste',
                 price: price,
                 qty: 1,
                 total: price
